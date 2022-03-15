@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import auth_types from "../../redux/types/auth";
 import { axiosInstance } from "../../configs/api";
 import { useRouter } from "next/router";
+import Cookie from "js-cookie";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -44,13 +45,20 @@ const LoginPage = () => {
             },
           });
 
-          localStorage.setItem(
-            "user_data",
-            JSON.stringify({
-              id: res.data[0].id,
-              username: res.data[0].username,
-            })
-          );
+          const stringifiedUserData = JSON.stringify({
+            id: res.data[0].id,
+            username: res.data[0].username,
+          });
+
+          // localStorage.setItem(
+          //   "user_data",
+          //   JSON.stringify({
+          //     id: res.data[0].id,
+          //     username: res.data[0].username,
+          //   })
+          // );
+
+          Cookie.set("user_data", stringifiedUserData);
 
           router.push("/");
         }

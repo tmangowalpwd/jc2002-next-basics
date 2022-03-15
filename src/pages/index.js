@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Text } from '@chakra-ui/react';
 import auth_types from '../redux/types/auth';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const authSelector = useSelector(state => state.auth)
@@ -19,9 +20,14 @@ export default function Home() {
       </Head>
 
       <Text fontSize="3xl">Halo {authSelector.username}</Text>
-      <Button onClick={() => dispatch({
-        type: auth_types.LOGOUT_USER
-      })}>Logout</Button>
+      <Button onClick={() => {
+        dispatch({
+          type: auth_types.LOGOUT_USER
+        })
+
+        // localStorage.removeItem("user_data")
+        Cookies.remove("user_data")
+      }}>Logout</Button>
     </div>
   )
 }

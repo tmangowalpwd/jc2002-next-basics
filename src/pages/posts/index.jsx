@@ -1,5 +1,6 @@
 import { Box, Center } from "@chakra-ui/react";
 import ContentCard from "../../components/ContentCard";
+import ProtectedPage from "../../components/ProtectedPage";
 
 const postData = {
   userId: 1,
@@ -15,12 +16,31 @@ const postData = {
 
 const PostsPage = () => {
   return (
-    <Box>
-      <Center>
-        <ContentCard {...postData} />
-      </Center>
-    </Box>
+    <ProtectedPage>
+      <Box>
+        <Center>
+          <ContentCard {...postData} />
+        </Center>
+      </Box>
+    </ProtectedPage>
   );
 };
+
+export async function getServerSideProps(context) {
+  const savedUserData = context.req.cookies.user_data;
+  console.log(savedUserData);
+
+  if (!savedUserData) {
+    return {
+      redirect: {
+        destination: "/",
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default PostsPage;
