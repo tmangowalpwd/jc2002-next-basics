@@ -11,10 +11,6 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <ChakraProvider>
-        <div>
-          <h1>test</h1>
-          <Link href="/products">Products</Link>
-        </div>
         <Component {...pageProps} />
       </ChakraProvider>
     </Provider>
