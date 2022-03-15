@@ -6,13 +6,19 @@ import {
   FormLabel,
   Input,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
-import { useRouter } from "next/router";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import auth_types from "../../redux/types/auth";
+import { axiosInstance } from "../../configs/api";
+import { useRouter } from "next/router";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
+  const toast = useToast();
 
   const formik = useFormik({
     initialValues: {
@@ -20,11 +26,42 @@ const LoginPage = () => {
       password: "",
       email: "",
     },
-    onSubmit: (values) => {
-      console.log(values);
-      formik.setFieldValue("username", "");
-      formik.setFieldValue("email", "");
-      formik.setFieldValue("password", "");
+    onSubmit: async (values) => {
+      try {
+        const res = await axiosInstance.get("/users", {
+          params: {
+            username: values.username,
+            password: values.password,
+          },
+        });
+
+        if (res.data.length) {
+          dispatch({
+            type: auth_types.LOGIN_USER,
+            payload: {
+              id: res.data[0].id,
+              username: res.data[0].username,
+            },
+          });
+
+          localStorage.setItem(
+            "user_data",
+            JSON.stringify({
+              id: res.data[0].id,
+              username: res.data[0].username,
+            })
+          );
+
+          router.push("/");
+        }
+      } catch (err) {
+        console.log(err);
+        toast({
+          title: "Error",
+          description: err.message,
+          status: "error",
+        });
+      }
     },
     validationSchema: Yup.object().shape({
       username: Yup.string()
@@ -37,9 +74,9 @@ const LoginPage = () => {
       //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
       //   "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
       // ),
-      email: Yup.string()
-        .required("This field is required")
-        .email("Please use a valid email"),
+      // email: Yup.string()
+      //   .required("This field is required")
+      //   .email("Please use a valid email"),
     }),
     validateOnChange: false,
   });
@@ -64,7 +101,7 @@ const LoginPage = () => {
             <FormHelperText>{formik.errors.username}</FormHelperText>
           </FormControl>
 
-          <FormControl isInvalid={formik.errors.email}>
+          {/* <FormControl isInvalid={formik.errors.email}>
             <FormLabel htmlFor="inputEmail">Email</FormLabel>
             <Input
               onChange={(event) =>
@@ -76,7 +113,7 @@ const LoginPage = () => {
               type="email"
             />
             <FormHelperText>{formik.errors.email}</FormHelperText>
-          </FormControl>
+          </FormControl> */}
 
           <FormControl isInvalid={formik.errors.password}>
             <FormLabel htmlFor="inputPassword">Password</FormLabel>

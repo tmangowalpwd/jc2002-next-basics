@@ -34,5 +34,17 @@
       "id": 3,
       "username": "seto"
     }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "seto",
+      "password": "password"
+    },
+    {
+      "id": 2,
+      "username": "mark",
+      "password": "password"
+    }
   ]
 }

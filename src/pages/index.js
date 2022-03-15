@@ -2,8 +2,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Text } from '@chakra-ui/react';
+import auth_types from '../redux/types/auth';
 
 export default function Home() {
+  const authSelector = useSelector(state => state.auth)
+  const dispatch = useDispatch();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,7 +18,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      Halo coy
+      <Text fontSize="3xl">Halo {authSelector.username}</Text>
+      <Button onClick={() => dispatch({
+        type: auth_types.LOGOUT_USER
+      })}>Logout</Button>
     </div>
   )
 }
