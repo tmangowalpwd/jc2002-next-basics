@@ -1,6 +1,7 @@
 import { Box, Center } from "@chakra-ui/react";
 import ContentCard from "../../components/ContentCard";
 import ProtectedPage from "../../components/ProtectedPage";
+import requiresAuth from "../../lib/requiresAuth";
 
 const postData = {
   userId: 1,
@@ -26,21 +27,10 @@ const PostsPage = () => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const savedUserData = context.req.cookies.user_data;
-  console.log(savedUserData);
-
-  if (!savedUserData) {
-    return {
-      redirect: {
-        destination: "/",
-      },
-    };
-  }
-
+export const getServerSideProps = requiresAuth((context) => {
   return {
     props: {},
   };
-}
+});
 
 export default PostsPage;
