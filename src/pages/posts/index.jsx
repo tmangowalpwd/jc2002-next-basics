@@ -1,6 +1,8 @@
-import { Box, Center } from "@chakra-ui/react";
+import { Box, Center, Stack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import ContentCard from "../../components/ContentCard";
 import ProtectedPage from "../../components/ProtectedPage";
+import { axiosInstance } from "../../configs/api";
 import requiresAuth from "../../lib/requiresAuth";
 
 const postData = {
@@ -16,21 +18,35 @@ const postData = {
 };
 
 const PostsPage = () => {
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await axiosInstance.get("/posts");
+
+      setPosts(res.data.result);
+    } catch (err) {
+      console.log(err?.response?.data?.message || err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
     <ProtectedPage>
       <Box>
         <Center>
-          <ContentCard {...postData} />
+          <Stack spacing={4}>
+            {posts.map((postData) => {
+              return <ContentCard {...postData} />;
+            })}
+          </Stack>
         </Center>
       </Box>
     </ProtectedPage>
   );
 };
-
-export const getServerSideProps = requiresAuth((context) => {
-  return {
-    props: {},
-  };
-});
 
 export default PostsPage;
