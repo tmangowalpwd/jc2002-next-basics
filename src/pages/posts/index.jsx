@@ -24,7 +24,7 @@ const PostsPage = () => {
     try {
       const res = await axiosInstance.get("/posts");
 
-      setPosts(res.data.result);
+      setPosts(res.data.result.rows);
     } catch (err) {
       console.log(err?.response?.data?.message || err.message);
     }
@@ -39,7 +39,7 @@ const PostsPage = () => {
       <Box>
         <Center>
           <Stack spacing={4}>
-            {posts.map((postData) => {
+            {posts?.map((postData) => {
               return <ContentCard {...postData} />;
             })}
           </Stack>
@@ -50,3 +50,4 @@ const PostsPage = () => {
 };
 
 export default PostsPage;
+

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Text, FormLabel, Input, Box } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { useFormik } from 'formik'
+import { axiosInstance } from '../configs/api';
 
 export default function Home() {
   const authSelector = useSelector(state => state.auth)
@@ -22,6 +23,23 @@ export default function Home() {
     alert(event.target.files[0].name)
   }
 
+  const uploadContentHandler = async () => {
+    const formData = new FormData();
+    const { caption, location } = formik.values
+
+    formData.append("caption", caption)
+    formData.append("location", location)
+    // formData.append("user_id", authSelector.id)
+    formData.append("user_id", 2)
+    formData.append("post_image_file", selectedFile)
+
+    try {
+      await axiosInstance.post("/posts", formData)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Box>
@@ -35,7 +53,10 @@ export default function Home() {
           onClick={() => inputFileRef.current.click()}
           colorScheme="facebook"
         >
-          Upload File
+          Choose File
+        </Button>
+        <Button onClick={uploadContentHandler} colorScheme="green" ml={4}>
+          Upload Content
         </Button>
       </Box>
     </div>
