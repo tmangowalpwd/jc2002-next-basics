@@ -1,28 +1,42 @@
-import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Text, FormLabel, Input, Box } from '@chakra-ui/react';
-import auth_types from '../redux/types/auth';
-import Cookies from 'js-cookie';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { useFormik } from 'formik'
 
 export default function Home() {
   const authSelector = useSelector(state => state.auth)
-  const dispatch = useDispatch();
+  const [selectedFile, setSelectedFile] = useState(null)
 
   const inputFileRef = useRef(null);
+
+  const formik = useFormik({
+    initialValues: {
+      caption: "",
+      location: ""
+    }
+  })
+
+  const handleFile = (event) => {
+    setSelectedFile(event.target.files[0])
+    alert(event.target.files[0].name)
+  }
 
   return (
     <div className={styles.container}>
       <Box>
         <FormLabel>Caption</FormLabel>
-        <Input />
+        <Input onChange={e => formik.setFieldValue("caption", e.target.value)} />
         <FormLabel>Location</FormLabel>
-        <Input />
+        <Input onChange={e => formik.setFieldValue("location", e.target.value)} />
         <FormLabel>Image</FormLabel>
-        <Input ref={inputFileRef} type="file" />
+        <Input accept="image/png, image/jpeg" onChange={handleFile} ref={inputFileRef} type="file" display="none" />
+        <Button
+          onClick={() => inputFileRef.current.click()}
+          colorScheme="facebook"
+        >
+          Upload File
+        </Button>
       </Box>
     </div>
   )
