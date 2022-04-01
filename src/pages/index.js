@@ -24,6 +24,12 @@ export default function Home() {
   }
 
   const uploadContentHandler = async () => {
+    // Proteksi jika file belum dipilih
+    if (!selectedFile) {
+      alert("Anda belum pilih file")
+      return;
+    };
+
     const formData = new FormData();
     const { caption, location } = formik.values
 
@@ -35,6 +41,9 @@ export default function Home() {
 
     try {
       await axiosInstance.post("/posts", formData)
+      setSelectedFile(null)
+      formik.setFieldValue("caption", "")
+      formik.setFieldValue("location", "")
     } catch (err) {
       console.log(err)
     }
@@ -44,9 +53,9 @@ export default function Home() {
     <div className={styles.container}>
       <Box>
         <FormLabel>Caption</FormLabel>
-        <Input onChange={e => formik.setFieldValue("caption", e.target.value)} />
+        <Input value={formik.values.caption} onChange={e => formik.setFieldValue("caption", e.target.value)} />
         <FormLabel>Location</FormLabel>
-        <Input onChange={e => formik.setFieldValue("location", e.target.value)} />
+        <Input value={formik.values.location} onChange={e => formik.setFieldValue("location", e.target.value)} />
         <FormLabel>Image</FormLabel>
         <Input accept="image/png, image/jpeg" onChange={handleFile} ref={inputFileRef} type="file" display="none" />
         <Button
