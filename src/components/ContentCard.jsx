@@ -48,7 +48,7 @@ const ContentCard = (props) => {
 
       {/* Like Count */}
       <Box paddingX="3">
-        <Text fontWeight="bold">{like_count.toLocaleString()} likes</Text>
+        <Text fontWeight="bold">{like_count?.toLocaleString()} likes</Text>
       </Box>
 
       {/* Caption */}

@@ -1,9 +1,10 @@
-import { Box, Center, Stack } from "@chakra-ui/react";
+import { Box, Center, Spinner, Stack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ContentCard from "../../components/ContentCard";
 import ProtectedPage from "../../components/ProtectedPage";
 import { axiosInstance } from "../../configs/api";
 import requiresAuth from "../../lib/requiresAuth";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const postData = {
   userId: 1,
@@ -19,30 +20,51 @@ const postData = {
 
 const PostsPage = () => {
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const maxPostsPerPage = 5;
 
   const fetchPosts = async () => {
+    console.log(page);
     try {
-      const res = await axiosInstance.get("/posts");
+      const res = await axiosInstance.get("/posts", {
+        params: {
+          _limit: maxPostsPerPage,
+          _page: page,
+        },
+      });
 
-      setPosts(res.data.result.rows);
+      setPosts((prevPosts) => [...prevPosts, ...res.data.result.rows]);
+      // setMaxPosts(res.data.result.count);
     } catch (err) {
       console.log(err?.response?.data?.message || err.message);
     }
   };
 
+  const fetchNextPage = () => {
+    setPage(page + 1);
+  };
+
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   return (
     <ProtectedPage>
       <Box>
         <Center>
-          <Stack spacing={4}>
+          <InfiniteScroll
+            dataLength={posts.length}
+            next={fetchNextPage}
+            hasMore={true}
+            loader={<Spinner />}
+          >
+            {/* <Stack spacing={4}> */}
             {posts?.map((postData) => {
               return <ContentCard {...postData} />;
             })}
-          </Stack>
+            {/* </Stack> */}
+          </InfiniteScroll>
         </Center>
       </Box>
     </ProtectedPage>
