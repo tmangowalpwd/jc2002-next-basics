@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:2020",
+  baseURL: "https://pict-perfect-api.jcwdkece.xyz",
 })
